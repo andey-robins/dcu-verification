@@ -3,7 +3,6 @@ class dcu_test extends uvm_test;
   
   dcu_env env;
   init_sequence seq;
-  
   load_sequence load_seq;
   arithmetic_sequence arth_seq;
   logic_sequence logic_seq;

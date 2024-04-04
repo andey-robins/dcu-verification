@@ -51,8 +51,7 @@ class init_sequence extends uvm_sequence;
   
   task post_body();
     `uvm_info("Sequences", "post_body", UVM_LOW)
-  endtask: post_body
-  
+  endtask: post_body  
 endclass: init_sequence
 
 /*****************************************************************************************************************/
@@ -100,8 +99,7 @@ class load_sequence extends uvm_sequence;
   task post_body();
     `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_load_seq.stop();
-  endtask: post_body
-  
+  endtask: post_body  
 endclass: load_sequence
 
 /*****************************************************************************************************************/
@@ -118,10 +116,10 @@ class arithmetic_sequence extends uvm_sequence;
     }
     
     source0_cp: coverpoint s0
-    	{option.auto_bin_max = 16;}
+    	{option.auto_bin_max = 8;}
     
     source1_cp: coverpoint s1
-    	{option.auto_bin_max = 16;}
+    	{option.auto_bin_max = 8;}
   endgroup: cg_arith_seq
   
   function new(string name="dcu_arithmetic_sequence");
@@ -135,7 +133,7 @@ class arithmetic_sequence extends uvm_sequence;
     arith_pkt = sequence_item::type_id::create("arith_pkt");
     start_item(arith_pkt);
     // constraints
-    arith_pkt.randomize() with { in[7:4] == 0'b0010 || in[7:4] == 0'b0011; }; 
+    arith_pkt.randomize() with { in[7:4] == 0'b0010 || in[7:4] == 0'b0011 || in[7:4] == 0'b1010 || in[7:4] == 0'b1011; }; 
     // covergroup
     cg_arith_seq.sample(arith_pkt.in[7:4], arith_pkt.io_in[7:4], arith_pkt.io_in[3:0]);
     finish_item(arith_pkt);
@@ -144,8 +142,7 @@ class arithmetic_sequence extends uvm_sequence;
   task post_body();
     `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_arith_seq.stop();
-  endtask: post_body
-  
+  endtask: post_body  
 endclass: arithmetic_sequence
 
 /*****************************************************************************************************************/
@@ -163,10 +160,10 @@ class logic_sequence extends uvm_sequence;
     }
     
     source0_cp: coverpoint s0
-    	{option.auto_bin_max = 16;}
+    	{option.auto_bin_max = 8;}
     
     source1_cp: coverpoint s1
-    	{option.auto_bin_max = 16;}
+    	{option.auto_bin_max = 8;}
   endgroup: cg_logic_seq
   
   function new(string name="dcu_logic_sequence");
@@ -180,7 +177,7 @@ class logic_sequence extends uvm_sequence;
     logic_pkt = sequence_item::type_id::create("logic_pkt");
     start_item(logic_pkt);
     // constraints
-    logic_pkt.randomize() with { in[7:4] == 0'b0100 || in[7:4] == 0'b0101 || in[7:4] == 0'b0110; }; 
+    logic_pkt.randomize() with { in[7:4] == 4'b0100 || in[7:4] == 4'b0101 || in[7:4] == 4'b0111 || in[7:4] == 4'b1100 || in[7:4] == 4'b1101 || in[7:4] == 4'b1111; }; 
     // covergroup
     cg_logic_seq.sample(logic_pkt.in[7:4], logic_pkt.io_in[7:4], logic_pkt.io_in[3:0]);
     finish_item(logic_pkt);
@@ -189,8 +186,7 @@ class logic_sequence extends uvm_sequence;
   task post_body();
     `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_logic_seq.stop();
-  endtask: post_body  
-  
+  endtask: post_body   
 endclass: logic_sequence
 
 /*****************************************************************************************************************/
@@ -200,8 +196,13 @@ class noop_sequence extends uvm_sequence;
   
   sequence_item noop_pkt;
   
-  covergroup cg_noop_seq with function sample();
-    
+  covergroup cg_noop_seq with function sample(logic [7:0] data);
+      data_cp: coverpoint data {
+      bins zeroes = {8'b00000000};
+      bins low = {[1:127]};
+      bins high = {[128:254]};
+      bins ones = {8'b11111111};
+    }
   endgroup: cg_noop_seq
   
   function new(string name="dcu_noop_sequence");
@@ -217,7 +218,7 @@ class noop_sequence extends uvm_sequence;
     // constraints
     noop_pkt.randomize() with {};
     //covergroup
-    cg_noop_seq.sample();
+    cg_noop_seq.sample(noop_pkt.io_in);
     finish_item(noop_pkt);
   endtask: body
   
@@ -234,7 +235,9 @@ class not_sequence extends uvm_sequence;
   
   sequence_item not_pkt;
   
-  covergroup cg_not_seq with function sample();
+  covergroup cg_not_seq with function sample(logic [3:0] s0);
+    source0_cp: coverpoint s0 
+    {option.auto_bin_max = 16;}
   endgroup: cg_not_seq
   
   function new(string name="dcu_not_sequence");
@@ -259,9 +262,3 @@ class not_sequence extends uvm_sequence;
     cg_not_seq.stop();
   endtask: post_body
 endclass: not_sequence
-
-/*****************************************************************************************************************/
-// DEFAULT
-// class default_sequence extends uvm_sequence;
-//   `uvm_object_utils(default_sequence)
-// endclass: default_sequence
