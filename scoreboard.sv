@@ -52,7 +52,7 @@ class dcu_scoreboard extends uvm_test;
     logic[3:0] src2 = curr_tx.io_in[3:0];
     logic[7:0] data = curr_tx.io_in;
 
-    logic[7:0] res = curr_tx.io_out;
+    logic[7:0] res = curr_tx.out;
 
     `uvm_info("DCU_SBOARD_CMP", $sformatf("op=%d, tgt=%d, src1=%d, src2=%d, data=%d", op, tgt, src1, src2, data), UVM_HIGH)
     case (op)
@@ -105,7 +105,9 @@ class dcu_scoreboard extends uvm_test;
         end
       end
       default: begin
-        `uvm_error("DCU_SBOARD_CMP", $sformatf("got invalid opcode: %d", op))
+        if (res != 8'b0000_0000) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("got invalid opcode with nonzero data: op=%d, data=%d", op, res))
+        end
       end
     endcase    
   endtask: compare

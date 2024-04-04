@@ -37,9 +37,7 @@ module test_top();
   end
   
   initial begin
-    //run_test("reset_test");
-    //run_test("cu0_test");
-    //run_test("cu1_test");
+    run_test("reset_test");
     run_test("dcu_test");
   end
   
@@ -55,8 +53,8 @@ module test_top();
 
   // timeout logic
   initial begin
-    #50000;
-    $display("Timeout triggered. Test ran for 50_000 cycles without finishing.");
+    #500_000;
+    $display("Timeout triggered. Test ran for 50_000_000 cycles without finishing.");
     $finish();
   end
 

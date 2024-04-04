@@ -29,6 +29,7 @@ endclass: sequence_item
 class load_sequence_item extends sequence_item;
   `uvm_object_utils(load_sequence_item)
   
+  constraint ena_c { ena == 1; }
   constraint op_c { in[7:4] == 0'b0001 || in[7:4] == 0'b1001; }
   constraint data_bin_distribution {
     io_in dist {

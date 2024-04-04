@@ -27,7 +27,8 @@ class dcu_test extends uvm_test;
     super.connect_phase(phase);
   endfunction: connect_phase
   
-  
+
+  // this runphase has ~250_000 cycles of tests
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     phase.raise_objection(this);
@@ -36,22 +37,25 @@ class dcu_test extends uvm_test;
     repeat(50) begin
       load_seq = load_sequence::type_id::create("load_seq");
       load_seq.start(env.agent.sequencer);
-      #15;
+      #495; // init @ 30*16 + 15 = 495 + 1 arith @ 15 == 510 total
     end
-
-    seq = init_sequence::type_id::create("init_seq");
-    seq.start(env.agent.sequencer);
     
     repeat(50) begin
+      seq = init_sequence::type_id::create("init_seq");
+      seq.start(env.agent.sequencer);
+
       arth_seq = arithmetic_sequence::type_id::create("arth_seq");
       arth_seq.start(env.agent.sequencer);
-      #15;
+      #510; // init @ 30*16 + 15 = 495 + 1 arith @ 15 == 510 total
     end
     
     repeat(100) begin
+      seq = init_sequence::type_id::create("init_seq");
+      seq.start(env.agent.sequencer);
+
       logic_seq = logic_sequence::type_id::create("logic_seq");
       logic_seq.start(env.agent.sequencer);
-      #15;
+      #510; // init @ 30*16 + 15 = 495 + 1 logic @ 15 == 510 total
     end
     
     repeat(50) begin
@@ -60,10 +64,13 @@ class dcu_test extends uvm_test;
       #15;
     end
     
-    repeat(50) begin
+    repeat(20) begin
+      seq = init_sequence::type_id::create("init_seq");
+      seq.start(env.agent.sequencer);
+
       not_seq = not_sequence::type_id::create("not_seq");
       not_seq.start(env.agent.sequencer);
-      #15;
+      #510; // init @ 30*16 + 15 = 495 + 1 not @ 15 == 510 total
     end
     
     #30

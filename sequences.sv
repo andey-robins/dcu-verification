@@ -37,17 +37,55 @@ class init_sequence extends uvm_sequence;
     enable_pkt = sequence_item::type_id::create("enable_pkt");
     start_item(enable_pkt);
     enable_pkt.randomize() with { rst == 1 && ena == 1; };
-    // covergroup sample packet here
+    #15;
+
     finish_item(enable_pkt);
     for (int i = 0; i <= 15; i++) begin
       load_pkt = load_sequence_item::type_id::create("load_pkt");
       start_item(load_pkt);
-      load_pkt.randomize() with {in[3:0] == i && io_in == i;};
+      load_pkt.randomize() with {rst == 1 && ena == 1 && in[7:4] == 0'b0001 && in[3:0] == i && io_in == i;};
       finish_item(load_pkt);
+      #15; // tried values from 1-20, none work
+    end 
+
+    for (int i = 0; i <= 15; i++) begin
+      load_pkt = load_sequence_item::type_id::create("load_pkt");
+      start_item(load_pkt);
+      load_pkt.randomize() with {rst == 1 && ena == 1 && in[7:4] == 0'b1001 && in[3:0] == i && io_in == i;};
+      finish_item(load_pkt);
+      #15; // tried values from 1-20, none work
     end
     
   endtask: body
 endclass: init_sequence
+
+class reset_sequence extends uvm_sequence;
+
+`uvm_object_utils(reset_sequence)
+  
+  load_sequence_item load_pkt;
+  sequence_item reset_pkt;
+  sequence_item enable_pkt;
+
+  function new(string name="dcu_reset_sequence");
+    super.new(name);
+  endfunction: new
+  
+  task body();
+    reset_pkt = sequence_item::type_id::create("reset_pkt");
+    start_item(reset_pkt);
+    reset_pkt.randomize() with {rst == 0;};
+    finish_item(reset_pkt);
+    #15;
+
+    enable_pkt = sequence_item::type_id::create("reset_pkt");
+    start_item(enable_pkt);
+    enable_pkt.randomize() with { rst == 1 && ena == 1; };
+    finish_item(enable_pkt);
+    #15;
+  endtask: body
+
+endclass: reset_sequence
 
 /*****************************************************************************************************************/
 // LOAD
@@ -81,10 +119,10 @@ class load_sequence extends uvm_sequence;
     enable_pkt.randomize() with { rst == 1 && ena == 1; };
     // covergroup sample packet here
     finish_item(enable_pkt);
-    
+    #15;
     load_pkt = load_sequence_item::type_id::create("load_pkt");
     start_item(load_pkt);
-    load_pkt.randomize();
+    load_pkt.randomize() with { rst == 1 && ena == 1; };
     // covergroup sample packet here
     cg_load_seq.sample(load_pkt.in[3:0], load_pkt.io_in);
     finish_item(load_pkt);
@@ -125,7 +163,7 @@ class arithmetic_sequence extends uvm_sequence;
     arith_pkt = sequence_item::type_id::create("arith_pkt");
     start_item(arith_pkt);
     // constraints
-    arith_pkt.randomize() with { in[7:4] == 0'b0010 || in[7:4] == 0'b0011 || in[7:4] == 0'b1010 || in[7:4] == 0'b1011; }; 
+    arith_pkt.randomize() with { rst == 1 && ena == 1 && in[7:4] == 0'b0010 || in[7:4] == 0'b0011 || in[7:4] == 0'b1010 || in[7:4] == 0'b1011; }; 
     // covergroup
     cg_arith_seq.sample(arith_pkt.in[7:4], arith_pkt.io_in[7:4], arith_pkt.io_in[3:0]);
     finish_item(arith_pkt);
@@ -167,7 +205,7 @@ class logic_sequence extends uvm_sequence;
     logic_pkt = sequence_item::type_id::create("logic_pkt");
     start_item(logic_pkt);
     // constraints
-    logic_pkt.randomize() with { in[7:4] == 4'b0100 || in[7:4] == 4'b0101 || in[7:4] == 4'b0111 || in[7:4] == 4'b1100 || in[7:4] == 4'b1101 || in[7:4] == 4'b1111; }; 
+    logic_pkt.randomize() with { rst == 1 && ena == 1 && in[7:4] == 4'b0100 || in[7:4] == 4'b0101 || in[7:4] == 4'b0111 || in[7:4] == 4'b1100 || in[7:4] == 4'b1101 || in[7:4] == 4'b1111; }; 
     // covergroup
     cg_logic_seq.sample(logic_pkt.in[7:4], logic_pkt.io_in[7:4], logic_pkt.io_in[3:0]);
     finish_item(logic_pkt);
@@ -204,7 +242,7 @@ class noop_sequence extends uvm_sequence;
     noop_pkt = sequence_item::type_id::create("noop_pkt");
     start_item(noop_pkt);
     // constraints
-    noop_pkt.randomize() with {};
+    noop_pkt.randomize() with {rst == 1 && ena == 1;};
     //covergroup
     cg_noop_seq.sample(noop_pkt.io_in);
     finish_item(noop_pkt);
@@ -237,7 +275,7 @@ class not_sequence extends uvm_sequence;
     not_pkt = sequence_item::type_id::create("not_pkt");
     start_item(not_pkt);
     //constraints
-    not_pkt.randomize() with {in[7:4] == 0'b0110 || in[7:4] == 0'b1110 ;};
+    not_pkt.randomize() with {rst == 1 && ena == 1 && in[7:4] == 0'b0110 || in[7:4] == 0'b1110 ;};
     //covergroup
     cg_not_seq.sample(not_pkt.io_in[7:4]);
     finish_item(not_pkt);
