@@ -21,6 +21,42 @@ class dcu_base_sequence extends uvm_sequence;
 endclass: dcu_base_sequence
 
 /*****************************************************************************************************************/
+// INITIALIZATION
+class init_sequence extends uvm_sequence;
+  `uvm_object_utils(init_sequence)
+  
+  load_sequence_item load_pkt;
+  sequence_item enable_pkt;
+
+  function new(string name="dcu_init_sequence");
+    super.new(name);
+  endfunction: new
+  
+  task body();
+    `uvm_info("sequences", "body", UVM_LOW)
+    // create load packet
+    enable_pkt = sequence_item::type_id::create("enable_pkt");
+    start_item(enable_pkt);
+    enable_pkt.randomize() with { rst == 1 && ena == 1; };
+    // covergroup sample packet here
+    finish_item(enable_pkt);
+    for (int i = 0; i <= 15; i++) begin
+      load_pkt = load_sequence_item::type_id::create("load_pkt");
+      start_item(load_pkt);
+      load_pkt.randomize() with {in[3:0] == i, io_in == i};
+      finish_item(load_pkt);
+    end
+    
+  endtask: body
+  
+  task post_body();
+    `uvm_info("Sequences", "post_body", UVM_LOW)
+    cg_load_seq.stop();
+  endtask: post_body
+  
+endclass: load_sequence
+
+/*****************************************************************************************************************/
 // LOAD
 class load_sequence extends uvm_sequence;
   `uvm_object_utils(load_sequence)
