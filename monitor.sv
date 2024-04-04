@@ -30,7 +30,7 @@ class dcu_monitor extends uvm_monitor;
   
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
-    `uvm_info("DCU_MONITOR", "RUN PHASE!", UVM_LOW)
+    // `uvm_info("DCU_MONITOR", "RUN PHASE!", UVM_LOW)
     
     forever begin
       item = sequence_item::type_id::create("item");
@@ -38,7 +38,6 @@ class dcu_monitor extends uvm_monitor;
       // sample inputs
       //wait(!vinf.rst);
       @(posedge vinf.clk);
-      `uvm_info("DCU_MONITOR", "clocked", UVM_LOW)
       item.rst = vinf.rst;
       item.ena = vinf.ena;
       item.in = vinf.in;
@@ -46,13 +45,11 @@ class dcu_monitor extends uvm_monitor;
       
       // sample outputs
       #15 // delay from spec
-      `uvm_info("DCU_MONITOR", "getting outputs", UVM_LOW)
       @(posedge vinf.clk);
       item.out = vinf.out;
       item.io_out = vinf.io_out;
       item.bidir_ena = vinf.bidir_ena;
       
-      `uvm_info("DCU_MONITOR", "writing to monitor port", UVM_LOW)
       monitor_port.write(item);
       
     end

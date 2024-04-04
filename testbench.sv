@@ -55,8 +55,8 @@ module test_top();
 
   // timeout logic
   initial begin
-    #5000;
-    $display("Timeout triggered. Test ran for 5000 cycles without finishing.");
+    #50000;
+    $display("Timeout triggered. Test ran for 50_000 cycles without finishing.");
     $finish();
   end
 

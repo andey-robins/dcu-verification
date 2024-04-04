@@ -44,37 +44,71 @@ class dcu_scoreboard extends uvm_test;
   
   
   task compare(sequence_item curr_tx);
+    logic[7:0] exp;
+    logic[7:0] act;
     
-    `uvm_info("DCU_SBOARD", $sformatf("%d", curr_tx.out), UVM_LOW)
-    `uvm_info("DCU_SBOARD", $sformatf("%d", curr_tx.io_out), UVM_LOW)
-    
-    //logic[7:0] exp;
-    //logic[7:0] act;
-    
-    /*case (curr_tx.op_code)
-      0: begin
-        // a + b
-        exp = curr_tx.a + curr_tx.b;
+    logic[3:0] op = curr_tx.in[7:4];
+    logic[3:0] tgt = curr_tx.in[3:0];
+    logic[3:0] src1 = curr_tx.io_in[7:4];
+    logic[3:0] src2 = curr_tx.io_in[3:0];
+    logic[7:0] data = curr_tx.io_in;
+
+    logic[7:0] res = curr_tx.io_out;
+
+    `uvm_info("DCU_SBOARD_CMP", $sformatf("op=%d, tgt=%d, src1=%d, src2=%d, data=%d", op, tgt, src1, src2, data), UVM_HIGH)
+    case (op)
+      0, 8: begin
+        // NOP
+        if (res != 8'b0000_0000) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("noop validation failed: got=%d, exp=%d", data, 8'b0000_0000))
+        end
       end
-      1: begin
-        exp = curr_tx.a - curr_tx.b;
+      1, 9: begin
+        // Load
+        if (res != data) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("load validation failed: got=%d, exp=%d", data, res))
+        end
       end
-      2: begin
-        exp = curr_tx.a * curr_tx.b;
+      2, 10: begin
+        // Add
+        if (res != (src1 + src2)) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("add validation failed: got=%d, exp=%d", data, res))
+        end
       end
-      3: begin
-        exp = curr_tx.a / curr_tx.b;
+      3, 11: begin
+        // Sub
+        if (res != (src1 - src2)) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("sub validation failed: got=%d, exp=%d", data, res))
+        end
       end
-    endcase
-    
-    act = curr_tx.res;
-    
-    if (exp != act) begin
-      `uvm_error("ALU_SBOARD_CMP", $sformatf("Tx failed: got=%d, exp=%d", act, exp))
-    end*/
-    
-    $display("Forcing pass");
-    
+      4, 12: begin
+        // And
+        if (res != (src1 && src2)) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("and validation failed: got=%d, exp=%d", data, res))
+        end
+      end
+      5, 13: begin
+        // Or
+        if (res != (src1 || src2)) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("or validation failed: got=%d, exp=%d", data, res))
+        end
+      end
+      6, 14: begin
+        // Not
+        if (res != ~src1) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("not validation failed: got=%d, exp=%d", data, res))
+        end
+      end
+      7, 15: begin
+        // Xor
+        if (res != (src1 ^ src2)) begin
+          `uvm_error("DCU_SBOARD_CMP", $sformatf("xor validation failed: got=%d, exp=%d", data, res))
+        end
+      end
+      default: begin
+        `uvm_error("DCU_SBOARD_CMP", $sformatf("got invalid opcode: %d", op))
+      end
+    endcase    
   endtask: compare
   
 endclass: dcu_scoreboard
