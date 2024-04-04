@@ -25,7 +25,6 @@ class reset_test extends uvm_test;
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     phase.raise_objection(this);
-    `uvm_info("RESET_TEST", "Top of run_phase", UVM_HIGH)
     
     phase.drop_objection(this);
   endtask: run_phase

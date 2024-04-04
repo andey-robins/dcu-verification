@@ -30,7 +30,6 @@ class dcu_monitor extends uvm_monitor;
   
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
-    // `uvm_info("DCU_MONITOR", "RUN PHASE!", UVM_LOW)
     
     forever begin
       item = sequence_item::type_id::create("item");

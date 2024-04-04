@@ -33,7 +33,6 @@ class init_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences", "body", UVM_LOW)
     // create load packet
     enable_pkt = sequence_item::type_id::create("enable_pkt");
     start_item(enable_pkt);
@@ -48,10 +47,6 @@ class init_sequence extends uvm_sequence;
     end
     
   endtask: body
-  
-  task post_body();
-    `uvm_info("Sequences", "post_body", UVM_LOW)
-  endtask: post_body  
 endclass: init_sequence
 
 /*****************************************************************************************************************/
@@ -80,7 +75,6 @@ class load_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences", "body", UVM_LOW)
     // create load packet
     enable_pkt = sequence_item::type_id::create("enable_pkt");
     start_item(enable_pkt);
@@ -97,7 +91,6 @@ class load_sequence extends uvm_sequence;
   endtask: body
   
   task post_body();
-    `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_load_seq.stop();
   endtask: post_body  
 endclass: load_sequence
@@ -128,7 +121,6 @@ class arithmetic_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences", "body", UVM_LOW)
     // packet
     arith_pkt = sequence_item::type_id::create("arith_pkt");
     start_item(arith_pkt);
@@ -140,7 +132,6 @@ class arithmetic_sequence extends uvm_sequence;
   endtask: body
   
   task post_body();
-    `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_arith_seq.stop();
   endtask: post_body  
 endclass: arithmetic_sequence
@@ -172,7 +163,6 @@ class logic_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences", "body", UVM_LOW)
     // packet
     logic_pkt = sequence_item::type_id::create("logic_pkt");
     start_item(logic_pkt);
@@ -184,7 +174,6 @@ class logic_sequence extends uvm_sequence;
   endtask: body
   
   task post_body();
-    `uvm_info("Sequences", "post_body", UVM_LOW)
     cg_logic_seq.stop();
   endtask: post_body   
 endclass: logic_sequence
@@ -211,7 +200,6 @@ class noop_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences","body", UVM_LOW)
     // packet
     noop_pkt = sequence_item::type_id::create("noop_pkt");
     start_item(noop_pkt);
@@ -223,7 +211,6 @@ class noop_sequence extends uvm_sequence;
   endtask: body
   
   task post_body();
-    `uvm_info("sequences", "post_body", UVM_LOW)
     cg_noop_seq.stop();
   endtask: post_body
 endclass: noop_sequence
@@ -246,19 +233,17 @@ class not_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    `uvm_info("sequences", "body", UVM_LOW)
     //packet
     not_pkt = sequence_item::type_id::create("not_pkt");
     start_item(not_pkt);
     //constraints
     not_pkt.randomize() with {in[7:4] == 0'b0110 || in[7:4] == 0'b1110 ;};
     //covergroup
-    cg_not_seq.sample();
+    cg_not_seq.sample(not_pkt.io_in[7:4]);
     finish_item(not_pkt);
   endtask: body
   
   task post_body();
-    `uvm_info("sequences", "post_body", UVM_LOW)
     cg_not_seq.stop();
   endtask: post_body
 endclass: not_sequence

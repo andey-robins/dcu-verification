@@ -31,7 +31,6 @@ class dcu_scoreboard extends uvm_test;
   task run_phase(uvm_phase phase);
     super.run_phase(phase);  
     `uvm_info("DCU_SCOREBOARD", "Running scoreboard", UVM_HIGH)
-    `uvm_info("DCU_SBOARD", "Started SBOARD run", UVM_LOW)
     
     forever begin
       sequence_item curr_tx;

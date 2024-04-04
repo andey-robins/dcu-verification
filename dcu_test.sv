@@ -31,7 +31,7 @@ class dcu_test extends uvm_test;
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     phase.raise_objection(this);
-    `uvm_info("DCU_TEST", "Top of run_phase", UVM_HIGH)
+    // `uvm_info("DCU_TEST", "Top of run_phase", UVM_HIGH)
     
     repeat(50) begin
       load_seq = load_sequence::type_id::create("load_seq");
@@ -65,12 +65,6 @@ class dcu_test extends uvm_test;
       not_seq.start(env.agent.sequencer);
       #15;
     end
-    
-//     repeat(50) begin
-//       default_seq = default_sequence::type_id::create("default_seq");
-//       default_seq.start(env.agent.sequencer);
-//       #15;
-//     end
     
     #30
     phase.drop_objection(this);
