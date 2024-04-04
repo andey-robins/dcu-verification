@@ -1,0 +1,11 @@
+csrc/
+simv.daidir/
+simv.vdb/
+urgReport/
+
+d.vcd
+simv
+*.log
+*.key
+vc_hdrs.h
+vcdplus.vpd
