@@ -2,7 +2,7 @@ class dcu_test extends uvm_test;
   `uvm_component_utils(dcu_test)
   
   dcu_env env;
-  load_sequence seq;
+  init_sequence seq;
   
   load_sequence load_seq;
   arithmetic_sequence arth_seq;
@@ -34,14 +34,14 @@ class dcu_test extends uvm_test;
     phase.raise_objection(this);
     `uvm_info("DCU_TEST", "Top of run_phase", UVM_HIGH)
     
-    seq = load_sequence::type_id::create("base_seq");
-    seq.start(env.agent.sequencer);
-    
     repeat(50) begin
       load_seq = load_sequence::type_id::create("load_seq");
       load_seq.start(env.agent.sequencer);
       #15;
     end
+
+    seq = init_sequence::type_id::create("init_seq");
+    seq.start(env.agent.sequencer);
     
     repeat(50) begin
       arth_seq = arithmetic_sequence::type_id::create("arth_seq");

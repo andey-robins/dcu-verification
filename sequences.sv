@@ -43,7 +43,7 @@ class init_sequence extends uvm_sequence;
     for (int i = 0; i <= 15; i++) begin
       load_pkt = load_sequence_item::type_id::create("load_pkt");
       start_item(load_pkt);
-      load_pkt.randomize() with {in[3:0] == i, io_in == i};
+      load_pkt.randomize() with {in[3:0] == i && io_in == i;};
       finish_item(load_pkt);
     end
     
@@ -51,10 +51,9 @@ class init_sequence extends uvm_sequence;
   
   task post_body();
     `uvm_info("Sequences", "post_body", UVM_LOW)
-    cg_load_seq.stop();
   endtask: post_body
   
-endclass: load_sequence
+endclass: init_sequence
 
 /*****************************************************************************************************************/
 // LOAD

@@ -13,8 +13,6 @@ import uvm_pkg::*;
 `include "scoreboard.sv"
 `include "env.sv"
 `include "dcu_test.sv"
-`include "cu0_test.sv"
-`include "cu1_test.sv"
 `include "reset_test.sv"
 
 module test_top();
