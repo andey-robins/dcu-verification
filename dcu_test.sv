@@ -63,7 +63,7 @@ class dcu_test extends uvm_test;
     
     repeat(50) begin
       not_seq = not_sequence::type_id::create("not_seq");
-       not_seq.start(env.agent.sequencer);
+      not_seq.start(env.agent.sequencer);
       #15;
     end
     
