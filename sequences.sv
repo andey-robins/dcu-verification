@@ -245,7 +245,13 @@ class noop_sequence extends uvm_sequence;
     noop_pkt = sequence_item::type_id::create("noop_pkt");
     start_item(noop_pkt);
     // constraints
-    noop_pkt.randomize() with {rst == 1 && ena == 1;};
+    noop_pkt.randomize() with {rst == 1 && ena == 1;
+                              io_in dist {
+                                8'b00000000 :/ 1,
+                                [1:127] :/ 1,
+                                [128:254] :/ 1,
+                                8'b11111111 :/ 1
+    						  };};
     //covergroup
     cg_noop_seq.sample(noop_pkt.io_in);
     finish_item(noop_pkt);
@@ -265,7 +271,7 @@ class not_sequence extends uvm_sequence;
   
   covergroup cg_not_seq with function sample(logic [3:0] s0);
     source0_cp: coverpoint s0 
-    {option.auto_bin_max = 16;}
+    {option.auto_bin_max = 8;}
   endgroup: cg_not_seq
   
   function new(string name="dcu_not_sequence");
@@ -278,7 +284,15 @@ class not_sequence extends uvm_sequence;
     not_pkt = sequence_item::type_id::create("not_pkt");
     start_item(not_pkt);
     //constraints
-    not_pkt.randomize() with {rst == 1 && ena == 1 && in[7:4] == 0'b0110 || in[7:4] == 0'b1110 ;};
+    not_pkt.randomize() with {rst == 1 && ena == 1 && in[7:4] == 0'b0110 || in[7:4] == 0'b1110 ;
+                              io_in dist {
+                                8'b00000000 :/ 1,
+                                [1:63] :/ 8,
+				[64:127] :/ 8,
+                                [128:191] :/ 8,
+				[192:254] :/ 8,
+                                8'b11111111 :/ 1
+    						  };};
     //covergroup
     cg_not_seq.sample(not_pkt.io_in[7:4]);
     finish_item(not_pkt);
