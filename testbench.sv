@@ -37,7 +37,7 @@ module test_top();
   end
   
   initial begin
-    run_test("reset_test");
+    // run_test("reset_test");
     run_test("dcu_test");
   end
   

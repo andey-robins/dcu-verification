@@ -76,13 +76,13 @@ class reset_sequence extends uvm_sequence;
     start_item(reset_pkt);
     reset_pkt.randomize() with {rst == 0;};
     finish_item(reset_pkt);
-    #15;
+    // #15;
 
     enable_pkt = sequence_item::type_id::create("reset_pkt");
     start_item(enable_pkt);
     enable_pkt.randomize() with { rst == 1 && ena == 1; };
     finish_item(enable_pkt);
-    #15;
+    // #15;
   endtask: body
 
 endclass: reset_sequence
@@ -99,8 +99,8 @@ class load_sequence extends uvm_sequence;
     target_cp: coverpoint tgt
     	{option.auto_bin_max = 16;}
     
-   data_cp: coverpoint data {
-     bins zeroes = {8'b00000000};
+    data_cp: coverpoint data {
+      bins zeroes = {8'b00000000};
       bins low = {[1:127]};
       bins high = {[128:254]};
       bins ones = {8'b11111111};
@@ -113,19 +113,20 @@ class load_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    // create load packet
+
     enable_pkt = sequence_item::type_id::create("enable_pkt");
     start_item(enable_pkt);
     enable_pkt.randomize() with { rst == 1 && ena == 1; };
-    // covergroup sample packet here
     finish_item(enable_pkt);
-    #15;
+
     load_pkt = load_sequence_item::type_id::create("load_pkt");
     start_item(load_pkt);
     load_pkt.randomize() with { rst == 1 && ena == 1; };
-    // covergroup sample packet here
+
     cg_load_seq.sample(load_pkt.in[3:0], load_pkt.io_in);
+
     finish_item(load_pkt);
+
   endtask: body
   
   task post_body();
@@ -179,13 +180,13 @@ endclass: arithmetic_sequence
 class logic_sequence extends uvm_sequence;
   `uvm_object_utils(logic_sequence)
   
-  sequence_item logic_pkt;
+  logic_sequence_item logic_pkt;
   
   covergroup cg_logic_seq with function sample(logic [3:0] op, logic [3:0] s0, logic [3:0] s1);
     op_cp: coverpoint op {
       bins and_op = {4'b0100};
       bins or_op = {4'b0101};
-      bins xor_op = {4'b0110};
+      bins xor_op = {4'b0111, 4'b1111};
     }
     
     source0_cp: coverpoint s0
@@ -201,19 +202,21 @@ class logic_sequence extends uvm_sequence;
   endfunction: new
   
   task body();
-    // packet
-    logic_pkt = sequence_item::type_id::create("logic_pkt");
+
+    logic_pkt = logic_sequence_item::type_id::create("logic_pkt");
     start_item(logic_pkt);
-    // constraints
-    logic_pkt.randomize() with { rst == 1 && ena == 1 && in[7:4] == 4'b0100 || in[7:4] == 4'b0101 || in[7:4] == 4'b0111 || in[7:4] == 4'b1100 || in[7:4] == 4'b1101 || in[7:4] == 4'b1111; }; 
-    // covergroup
+
+    logic_pkt.randomize(); 
     cg_logic_seq.sample(logic_pkt.in[7:4], logic_pkt.io_in[7:4], logic_pkt.io_in[3:0]);
+
     finish_item(logic_pkt);
+
   endtask: body
   
   task post_body();
     cg_logic_seq.stop();
   endtask: post_body   
+
 endclass: logic_sequence
 
 /*****************************************************************************************************************/

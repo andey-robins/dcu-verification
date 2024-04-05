@@ -32,14 +32,13 @@ class dcu_test extends uvm_test;
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     phase.raise_objection(this);
-    // `uvm_info("DCU_TEST", "Top of run_phase", UVM_HIGH)
     
-    repeat(50) begin
+    repeat (50) begin
       load_seq = load_sequence::type_id::create("load_seq");
       load_seq.start(env.agent.sequencer);
-      #495; // init @ 30*16 + 15 = 495 + 1 arith @ 15 == 510 total
+      #510; // 15 cycles for each of 16 values == 510 total
     end
-    
+      
     repeat(50) begin
       seq = init_sequence::type_id::create("init_seq");
       seq.start(env.agent.sequencer);

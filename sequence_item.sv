@@ -29,7 +29,7 @@ endclass: sequence_item
 class load_sequence_item extends sequence_item;
   `uvm_object_utils(load_sequence_item)
   
-  constraint ena_c { ena == 1; }
+  constraint ena_c { ena == 1 && rst == 1; }
   constraint op_c { in[7:4] == 0'b0001 || in[7:4] == 0'b1001; }
   constraint data_bin_distribution {
     io_in dist {
@@ -45,3 +45,26 @@ class load_sequence_item extends sequence_item;
   endfunction: new
   
 endclass: load_sequence_item
+
+class logic_sequence_item extends sequence_item;
+  `uvm_object_utils(logic_sequence_item)
+  
+  constraint ena_c { ena == 1 && rst == 1; }
+  constraint op_c { in[7:4] == 4'b0100 || in[7:4] == 4'b0101 || in[7:4] == 4'b0111 || // CU0 addresses
+                    in[7:4] == 4'b1100 || in[7:4] == 4'b1101 || in[7:4] == 4'b1111; } // CU1 addresses
+  constraint op_bin_distribution {
+    in[7:4] dist {
+      4'b0100 :/ 1,
+      4'b0101 :/ 1,
+      4'b0111 :/ 1,
+      4'b1100 :/ 1,
+      4'b1101 :/ 1,
+      4'b1111 :/ 1
+    };
+   }
+  
+  function new(string name="logic_seq_item");
+    super.new(name);
+  endfunction: new
+  
+endclass: logic_sequence_item
